@@ -30,6 +30,7 @@ import java.util.Map;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements AIListener {
 
     private Button listenButton;
     private TextView resultTextView;
+    private EditText usernameET;
 
     private AIService aiService;
 
@@ -49,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements AIListener {
 
         listenButton = (Button) findViewById(R.id.listenButton);
         resultTextView = (TextView) findViewById(R.id.resultTextView);
+        usernameET = (EditText) findViewById(R.id.username);
 
         final AIConfiguration config = new AIConfiguration("16aba6053f994eda9586c30feeebe9e7",
                 AIConfiguration.SupportedLanguages.English,
@@ -128,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements AIListener {
                 Log.d("Bad Word", "Wash your mouth boi");
                 Toast.makeText(getApplicationContext(), "Wash your mouth!", Toast.LENGTH_SHORT).show();
 
-                new PostClass(this, "http://b7f2805d.ngrok.io/swear", "user", "amrut").execute();
+                new PostClass(this, "http://b7f2805d.ngrok.io/swear", "user", usernameET.getText().toString()).execute();
 
             } // end of if
 
