@@ -1,6 +1,8 @@
 package nikhil.com.swear_app;
 
 import android.Manifest;
+import android.content.Context;
+import android.os.AsyncTask;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,16 +15,23 @@ import ai.api.model.AIError;
 import ai.api.model.AIResponse;
 import ai.api.model.Result;
 import com.google.gson.JsonElement;
+
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
-
+import android.widget.Toast;
 
 
 public class MainActivity extends AppCompatActivity implements AIListener {
@@ -53,26 +62,47 @@ public class MainActivity extends AppCompatActivity implements AIListener {
                 new String[]{Manifest.permission.RECORD_AUDIO}, 0);
 
 
+        // "http://d36bb8c4.ngrok.io/swear"
+        // user login
+//        new PostClass(this, "http://b7f2805d.ngrok.io/swear", "penis", "amrut").execute();
 
     }
 
 
-    public void postData() throws Exception {
-        URL url = new URL("http://d36bb8c4.ngrok.io/swear");
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("POST");
-        connection.setRequest;
-
-    }
+//    public void postData() throws Exception {
+//
+//
+//        URL url = new URL("http://d36bb8c4.ngrok.io/swear");
+//        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+//        connection.setRequestMethod("POST");
+////        connection.setRequestProperty("User-Agent", "Nadgir");
+////        connection.setRequestProperty("Accept-Language", "en-US,en;0.5");
+//        connection.setDoOutput(true);
+//
+//        // output data
+//        DataOutputStream dStream = new DataOutputStream(connection.getOutputStream());
+//        dStream.writeBytes("penis=assrut");
+//        dStream.flush();
+//        dStream.close();
+//
+//        Log.d("Sent post", "DO NOT READ");
+//
+//    }
 
 
     public void listenButtonOnClick(final View view) {
+        resultTextView.setText("{New Query Pending}");
         aiService.startListening();
+
     }
 
     @Override
     public void onResult(final AIResponse response) {
         Result result = response.getResult();
+
+        Log.d("Result", "Got result");
+
+        Log.d("Query: ", Integer.toString(result.getResolvedQuery().length()));
 
         // Get parameters
         String parameterString = "";
@@ -80,14 +110,115 @@ public class MainActivity extends AppCompatActivity implements AIListener {
             for (final Map.Entry<String, JsonElement> entry : result.getParameters().entrySet()) {
                 parameterString += "(" + entry.getKey() + ", " + entry.getValue() + ") ";
             }
-        }
+
+
+        } // end of if
+
+        // check for curse words (haw)
+        String[] badboy = new String[]{"truck", "sit", "pass", "Rishi", "Arthur"};
+
+        for (int i = 0; i < badboy.length; i++) {
+
+            String badword = badboy[i];
+
+//            Log.d("Refreeze", badword);
+
+            if (result.getResolvedQuery().toString().contains(badword)) {
+
+                Log.d("Bad Word", "Wash your mouth boi");
+                Toast.makeText(getApplicationContext(), "Wash your mouth!", Toast.LENGTH_SHORT).show();
+
+                new PostClass(this, "http://b7f2805d.ngrok.io/swear", "user", "amrut").execute();
+
+            } // end of if
+
+        } // end of foreach
+
 
         // Show results in TextView.
-        resultTextView.setText("Query:" + result.getResolvedQuery() +
-                "\nAction: " + result.getAction() +
-                "\nParameters: " + parameterString);
+        resultTextView.setText(result.getResolvedQuery());
+
+    } // end of onResult
+
+    // postmaster general
+    private class PostClass extends AsyncTask<String, Void, Void> {
+
+        private final Context context;
+        private String stringURL;
+        private String key, value;
+
+        public PostClass(Context c, String stringURL, String key, String value){
+            this.context = c;
+            this.stringURL = stringURL;
+            this.key = key;
+            this.value = value;
+        }
+
+//        "http://d36bb8c4.ngrok.io/swear"
+
+        protected void onPreExecute(){
+//            progress= new ProgressDialog(this.context);
+//            progress.setMessage("Loading");
+//            progress.show();
+        }
+
+        @Override
+        protected Void doInBackground(String... params) {
+            try {
+
+//                final TextView outputView = (TextView) findViewById(R.id.showOutput);
+                URL url = new URL(stringURL);
+
+                HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+                String urlParameters = "fizz=buzz";
+                connection.setRequestMethod("POST");
+                connection.setRequestProperty("USER-AGENT", "Mozilla/5.0");
+                connection.setRequestProperty("ACCEPT-LANGUAGE", "en-US,en;0.5");
+                connection.setDoOutput(true);
+                DataOutputStream dStream = new DataOutputStream(connection.getOutputStream());
+                dStream.writeBytes(key + "=" + value);
+                dStream.flush();
+                dStream.close();
+                int responseCode = connection.getResponseCode();
+
+                final StringBuilder output = new StringBuilder("Request URL " + url);
+                output.append(System.getProperty("line.separator") + "Request Parameters " + urlParameters);
+                output.append(System.getProperty("line.separator")  + "Response Code " + responseCode);
+                output.append(System.getProperty("line.separator")  + "Type " + "POST");
+                BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String line = "";
+                StringBuilder responseOutput = new StringBuilder();
+                System.out.println("output===============" + br);
+                while((line = br.readLine()) != null ) {
+                    responseOutput.append(line);
+                }
+                br.close();
+
+                output.append(System.getProperty("line.separator") + "Response " + System.getProperty("line.separator") + System.getProperty("line.separator") + responseOutput.toString());
+//
+//                MainActivity.this.runOnUiThread(new Runnable() {
+//
+//                    @Override
+//                    public void run() {
+//                        outputView.setText(output);
+//                        progress.dismiss();
+//                    }
+//                });
+
+            } catch (MalformedURLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            return null;
+        }
     }
 
+
+
+    // unimplemented implemented methods
     @Override
     public void onError(AIError error) {
         resultTextView.setText(error.toString());

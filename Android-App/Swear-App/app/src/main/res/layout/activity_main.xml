@@ -16,7 +16,11 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_above="@+id/listenButton"
-        android:text="Hello" />
+        android:text="Hello"
+        android:textColor="#e53d4857"
+        android:typeface="sans"
+        android:visibility="visible"
+        android:textSize="17sp" />
 
     <Button
         android:layout_width="wrap_content"
