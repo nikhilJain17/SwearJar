@@ -61,6 +61,8 @@ public class MainActivity extends AppCompatActivity implements AIListener {
         aiService.setListener(this);
 
         // request permission
+//        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION});
+
         ActivityCompat.requestPermissions(this,
                 new String[]{Manifest.permission.RECORD_AUDIO}, 0);
 
@@ -121,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements AIListener {
         } // end of if
         //check for Amrut Nadgir
         // check for curse words (haw)
-        String[] badboy = new String[]{"truck", "sit", "pass", "Rishi", "Arthur","Amrut", "Nadgir", "McNulty", "Ali", "bomb", "pussy"};
+        String[] badboy = new String[]{"truck", "sit", "pass", "Rishi", "Arthur","Amrut", "Nadgir"};
 
         for (int i = 0; i < badboy.length; i++) {
 
@@ -134,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements AIListener {
                 Log.d("Bad Word", "Wash your mouth boi");
                 Toast.makeText(getApplicationContext(), "Wash your mouth!", Toast.LENGTH_SHORT).show();
 
-                new PostClass(this, "http://b7f2805d.ngrok.io/swear", "user", usernameET.getText().toString()).execute();
+                new PostClass(this, "http://106f9bf3.ngrok.io/swear", "user", usernameET.getText().toString()).execute();
 
             } // end of if
 
