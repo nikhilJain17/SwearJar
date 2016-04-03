@@ -65,6 +65,9 @@ public class MainActivity extends AppCompatActivity implements AIListener {
                 new String[]{Manifest.permission.RECORD_AUDIO}, 0);
 
 
+        // listen initially
+        aiService.startListening();
+
         // "http://d36bb8c4.ngrok.io/swear"
         // user login
 //        new PostClass(this, "http://b7f2805d.ngrok.io/swear", "penis", "amrut").execute();
@@ -116,9 +119,9 @@ public class MainActivity extends AppCompatActivity implements AIListener {
 
 
         } // end of if
-
+        //check for Amrut Nadgir
         // check for curse words (haw)
-        String[] badboy = new String[]{"truck", "sit", "pass", "Rishi", "Arthur"};
+        String[] badboy = new String[]{"truck", "sit", "pass", "Rishi", "Arthur","Amrut", "Nadgir", "McNulty", "Ali", "bomb", "pussy"};
 
         for (int i = 0; i < badboy.length; i++) {
 
@@ -140,6 +143,10 @@ public class MainActivity extends AppCompatActivity implements AIListener {
 
         // Show results in TextView.
         resultTextView.setText(result.getResolvedQuery());
+
+        // send another request
+        aiService.startListening();
+
 
     } // end of onResult
 
@@ -225,6 +232,7 @@ public class MainActivity extends AppCompatActivity implements AIListener {
     @Override
     public void onError(AIError error) {
         resultTextView.setText(error.toString());
+        aiService.startListening();
     }
 
     @Override
@@ -234,16 +242,16 @@ public class MainActivity extends AppCompatActivity implements AIListener {
 
     @Override
     public void onListeningStarted() {
-
+        Log.d("Listening", "Started");
     }
 
     @Override
     public void onListeningCanceled() {
-
+        aiService.startListening();
     }
 
     @Override
     public void onListeningFinished() {
-
+        Log.d("Listening", "Finished");
     }
 }
