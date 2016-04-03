@@ -23,6 +23,7 @@
         android:text="Listen"
         android:id="@+id/listenButton"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:onClick="listenButtonOnClick"/>
 
 </RelativeLayout>
